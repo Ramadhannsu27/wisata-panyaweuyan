@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard Wisata Panyaweuyan</title>
+<style>
+  :root {
+    --orange: #f28c28;
+    --orange-dark: #d9741a;
+    --green: #1f5f3a;
+    --green-dark: #15462b;
+    --ink: #1d2733;
+    --muted: #667085;
+    --bg: #f4f6f8;
+    --card: #fff;
+    --radius: 14px;
+    --shadow: 0 4px 16px rgb(0 0 0 / .08);
+    --border: #e2e8f0;
+    --card-border: rgba(0, 0, 0, 0.06);
+    --icon-bg: #fff3e3;
+    --highlight-bg: #fdf6ec;
+    --highlight-border: #fed7aa;
+    --details-bg: #f8fafc;
+    --filter-bg: #ffffff;
+    --filter-border: #d0d5dd;
+    --filter-text: #1d2733;
+    --dashed-border: #eef1f4;
+    --footer-bg: #1d2733;
+    --nav-bg: #f28c28;
+    --header-bg: linear-gradient(135deg, #1f5f3a, #2e8b57);
+  }
+
+  [data-theme="dark"] {
+    --orange: #f59e0b;
+    --orange-dark: #d97706;
+    --green: #22c55e;
+    --green-dark: #16a34a;
+    --ink: #f1f5f9;
+    --muted: #94a3b8;
+    --bg: #0b1120;
+    --card: #1e293b;
+    --shadow: 0 4px 20px rgb(0 0 0 / .45);
+    --border: #334155;
+    --card-border: #334155;
+    --icon-bg: #3b2a1a;
+    --highlight-bg: #1e2230;
+    --highlight-border: #78350f;
+    --details-bg: #0f172a;
+    --filter-bg: #1e293b;
+    --filter-border: #475569;
+    --filter-text: #f1f5f9;
+    --dashed-border: #334155;
+    --footer-bg: #070b14;
+    --nav-bg: #b45309;
+    --header-bg: linear-gradient(135deg, #0d2818, #18442a);
+  }
+
+  * { box-sizing: border-box; margin: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: "Segoe UI", system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.5;
+    transition: background-color .25s ease, color .25s ease;
+  }
+  img { display: block; max-width: 100%; }
+  a { color: inherit; text-decoration: none; }
+
+  /* Header */
+  .site-header { background: var(--header-bg); color: #fff; padding: 24px clamp(16px, 4vw, 48px) 0; transition: background .3s ease; }
+  .brand { display: flex; align-items: center; gap: 14px; margin-bottom: 6px; }
+  .brand .logo { width: 50px; height: 50px; border-radius: 50%; background: var(--orange); display: grid; place-items: center; font-size: 26px; box-shadow: 0 2px 8px rgb(0 0 0 / .2); }
+  .brand h1 { font-size: clamp(1.25rem, 3vw, 1.85rem); }
+  .brand p { font-size: .92rem; opacity: .9; }
+
+  /* Banner foto kegiatan */
+  .banner { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px; margin-top: 18px; border-radius: var(--radius) var(--radius) 0 0; overflow: hidden; }
+  .banner-item { position: relative; height: 160px; overflow: hidden; cursor: zoom-in; background: var(--border); }
+  .banner-item img { width: 100%; height: 100%; object-fit: cover; transition: transform .35s ease; }
+  .banner-item:hover img { transform: scale(1.08); }
+  .banner-tag { position: absolute; bottom: 8px; left: 8px; background: rgba(0, 0, 0, .7); color: #fff; font-size: .75rem; font-weight: 600; padding: 3px 9px; border-radius: 6px; backdrop-filter: blur(4px); pointer-events: none; }
+
+  /* Menu */
+  nav { background: var(--nav-bg); position: sticky; top: 0; z-index: 10; box-shadow: 0 2px 6px rgb(0 0 0 / .15); transition: background-color .25s ease; }
+  .nav-container { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; padding: 0 clamp(10px, 2vw, 24px); }
+  nav ul { list-style: none; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; }
+  nav a { display: block; padding: 12px 18px; font-size: .85rem; font-weight: 600; text-transform: uppercase; color: #fff; letter-spacing: .04em; transition: background .2s ease; }
+  nav a:hover, nav a.active { background: rgba(0, 0, 0, 0.22); }
+
+  .theme-toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    color: #fff;
+    padding: 6px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: .82rem;
+    font-weight: 600;
+    transition: all .2s ease;
+    white-space: nowrap;
+    user-select: none;
+  }
+  .theme-toggle-btn:hover {
+    background: rgba(0, 0, 0, 0.35);
+    border-color: rgba(255, 255, 255, 0.65);
+    transform: translateY(-1px);
+  }
+  .theme-toggle-btn:active { transform: translateY(0); }
+  @media (max-width: 768px) {
+    .nav-container { flex-direction: column; padding: 6px 10px 8px; gap: 4px; }
+    nav a { padding: 8px 12px; font-size: .78rem; }
+  }
+
+  main { max-width: 1200px; margin: 0 auto; padding: 24px clamp(16px, 4vw, 32px) 48px; }
+  section { margin-top: 36px; scroll-margin-top: 60px; }
+  h2 { font-size: 1.35rem; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; color: var(--ink); }
+  h2::before { content: ""; width: 5px; height: 1.2em; background: var(--orange); border-radius: 3px; }
+
+  /* Statistik */
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 16px; }
+  .stat { background: var(--card); border: 1px solid var(--card-border); border-radius: var(--radius); padding: 18px; box-shadow: var(--shadow); display: flex; align-items: center; gap: 14px; transition: all .25s ease; }
+  .stat .icon { font-size: 28px; width: 52px; height: 52px; border-radius: 12px; display: grid; place-items: center; background: var(--icon-bg); }
+  .stat strong { font-size: 1.35rem; display: block; line-height: 1.1; color: var(--ink); }
+  .stat span { color: var(--muted); font-size: .82rem; }
+
+  /* Layout 2 kolom: paket + sidebar */
+  .layout { display: grid; grid-template-columns: 1fr; gap: 28px; }
+  @media (min-width: 900px) { .layout { grid-template-columns: 1fr 340px; } }
+
+  /* Filter */
+  .filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+  .filters button { border: 1px solid var(--filter-border); background: var(--filter-bg); color: var(--filter-text); padding: 6px 16px; border-radius: 999px; cursor: pointer; font: inherit; font-size: .85rem; transition: all .2s; }
+  .filters button[aria-pressed="true"] { background: var(--orange); border-color: var(--orange); color: #fff; font-weight: 600; }
+
+  /* Paket wisata */
+  .packages { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 18px; }
+  .card { background: var(--card); border: 1px solid var(--card-border); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); display: flex; flex-direction: column; transition: transform .2s, box-shadow .2s, background-color .25s, border-color .25s; }
+  .card:hover { transform: translateY(-4px); box-shadow: 0 10px 24px rgb(0 0 0 / .14); }
+  .card .card-img-wrap { position: relative; width: 100%; aspect-ratio: 16 / 10; overflow: hidden; background: var(--border); cursor: zoom-in; }
+  .card img { width: 100%; height: 100%; object-fit: cover; transition: transform .3s; }
+  .card:hover img { transform: scale(1.05); }
+  .card .body { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+  .card .date { font-size: .75rem; color: var(--muted); }
+  .card h3 { font-size: 1rem; line-height: 1.3; color: var(--ink); }
+  .card p { font-size: .85rem; color: var(--muted); flex: 1; line-height: 1.45; }
+  .card .foot { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--dashed-border); }
+  .price { color: var(--orange-dark); font-weight: 700; font-size: .95rem; }
+  [data-theme="dark"] .price { color: #fb923c; }
+  .btn { background: var(--green); color: #fff; padding: 7px 14px; border-radius: 8px; font-size: .82rem; font-weight: 600; transition: background .2s; }
+  .btn:hover { background: var(--green-dark); }
+  [data-theme="dark"] .btn { background: #15803d; }
+  [data-theme="dark"] .btn:hover { background: #166534; }
+  .tag { align-self: flex-start; background: #e7f5ec; color: var(--green); font-size: .7rem; font-weight: 700; padding: 2px 10px; border-radius: 999px; text-transform: uppercase; }
+  [data-theme="dark"] .tag { background: #064e3b; color: #86efac; }
+
+  /* Sidebar */
+  aside .box { background: var(--card); border: 1px solid var(--card-border); border-radius: var(--radius); padding: 18px; box-shadow: var(--shadow); margin-bottom: 20px; transition: background-color .25s, border-color .25s; }
+  aside h3 { margin-bottom: 12px; font-size: 1rem; display: flex; align-items: center; gap: 6px; color: var(--ink); }
+  .video { aspect-ratio: 16 / 9; border-radius: 10px; overflow: hidden; background: #000; }
+  .video iframe { width: 100%; height: 100%; border: 0; display: block; }
+  .video-link { display: inline-block; margin-top: 10px; font-size: .85rem; color: #c4302b; font-weight: 600; }
+  .video-link:hover { text-decoration: underline; }
+  [data-theme="dark"] .video-link { color: #f87171; }
+  .badge-pill { font-size: .75rem; color: var(--muted); background: var(--border); padding: 3px 8px; border-radius: 4px; }
+  .info ul { padding-left: 0; list-style: none; }
+  .info li { padding: 7px 0; border-bottom: 1px dashed var(--dashed-border); font-size: .88rem; color: var(--ink); }
+  .info li:last-child { border: 0; }
+  .highlight-box { background: var(--highlight-bg); border: 1px solid var(--highlight-border); }
+
+  /* Galeri */
+  .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+  .gallery-card { background: var(--card); border: 1px solid var(--card-border); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); transition: transform .2s, box-shadow .2s, background-color .25s, border-color .25s; cursor: pointer; display: flex; flex-direction: column; }
+  .gallery-card:hover { transform: translateY(-4px); box-shadow: 0 10px 24px rgb(0 0 0 / .14); }
+  .gallery-card .img-wrap { position: relative; aspect-ratio: 16 / 11; overflow: hidden; background: var(--border); }
+  .gallery-card img { width: 100%; height: 100%; object-fit: cover; transition: transform .35s; }
+  .gallery-card:hover img { transform: scale(1.06); }
+  .gallery-card .zoom-hint { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.6); color: #fff; border-radius: 50%; width: 28px; height: 28px; display: grid; place-items: center; font-size: 13px; opacity: 0; transition: opacity .2s; }
+  .gallery-card:hover .zoom-hint { opacity: 1; }
+  .gallery-card .caption { padding: 12px 14px 14px; }
+  .gallery-card h4 { font-size: .95rem; margin-bottom: 4px; color: var(--ink); }
+  .gallery-card p { font-size: .82rem; color: var(--muted); line-height: 1.4; }
+
+  /* Lightbox Dialog */
+  dialog { border: 1px solid var(--border); border-radius: var(--radius); padding: 0; max-width: min(92vw, 920px); background: #111; color: #fff; overflow: hidden; box-shadow: 0 20px 40px rgb(0 0 0 / .5); }
+  dialog::backdrop { background: rgb(0 0 0 / .78); backdrop-filter: blur(4px); }
+  .dialog-content { position: relative; display: flex; flex-direction: column; }
+  dialog img { width: 100%; max-height: 78vh; object-fit: contain; background: #000; }
+  .dialog-info { padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; background: #1a1a1a; gap: 12px; }
+  .dialog-info span { font-size: .92rem; font-weight: 500; }
+  .dialog-close { background: rgba(255,255,255,.18); color: #fff; border: 0; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: .85rem; font-weight: 600; }
+  .dialog-close:hover { background: rgba(255,255,255,.32); }
+
+  /* Contact section styles */
+  .contact-card {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius);
+    padding: clamp(20px, 3vw, 32px);
+    box-shadow: var(--shadow);
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    border-left: 5px solid var(--orange);
+    transition: background-color .25s, border-color .25s;
+  }
+  @media (min-width: 800px) {
+    .contact-card {
+      grid-template-columns: 1.4fr 1fr;
+    }
+  }
+  .contact-main h3 {
+    font-size: 1.2rem;
+    margin-bottom: 8px;
+    color: var(--green);
+  }
+  [data-theme="dark"] .contact-main h3 { color: #4ade80; }
+  .contact-main p {
+    font-size: .9rem;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 16px;
+  }
+  .phone-highlight {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    background: var(--highlight-bg);
+    border: 1px solid var(--highlight-border);
+    border-radius: 12px;
+    padding: 12px 18px;
+    margin-bottom: 18px;
+    transition: background-color .25s, border-color .25s;
+  }
+  .phone-highlight .phone-icon {
+    font-size: 28px;
+  }
+  .phone-label {
+    font-size: .75rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--orange-dark);
+    letter-spacing: .05em;
+  }
+  [data-theme="dark"] .phone-label { color: #fbbf24; }
+  .phone-number {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: var(--ink);
+    letter-spacing: .02em;
+    display: block;
+    transition: color .2s;
+  }
+  .phone-number:hover {
+    color: var(--orange);
+    text-decoration: underline;
+  }
+  .contact-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .btn-wa {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #25d366;
+    color: #fff;
+    font-weight: 600;
+    font-size: .9rem;
+    padding: 10px 18px;
+    border-radius: 8px;
+    transition: background .2s, transform .2s;
+    text-decoration: none;
+  }
+  .btn-wa:hover {
+    background: #20ba5a;
+    transform: translateY(-2px);
+  }
+  .btn-call {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--green);
+    color: #fff;
+    font-weight: 600;
+    font-size: .9rem;
+    padding: 10px 18px;
+    border-radius: 8px;
+    transition: background .2s, transform .2s;
+    text-decoration: none;
+  }
+  .btn-call:hover {
+    background: var(--green-dark);
+    transform: translateY(-2px);
+  }
+  [data-theme="dark"] .btn-call { background: #15803d; }
+  [data-theme="dark"] .btn-call:hover { background: #166534; }
+  .contact-details {
+    background: var(--details-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    justify-content: center;
+    transition: background-color .25s, border-color .25s;
+  }
+  .detail-item strong {
+    display: block;
+    font-size: .85rem;
+    color: var(--ink);
+    margin-bottom: 2px;
+  }
+  .detail-item span {
+    font-size: .83rem;
+    color: var(--muted);
+    line-height: 1.45;
+    display: block;
+  }
+  .header-phone-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.16);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    padding: 8px 16px;
+    border-radius: 50px;
+    color: #fff;
+    backdrop-filter: blur(6px);
+    transition: background .2s, transform .2s;
+    margin-left: auto;
+    white-space: nowrap;
+    text-decoration: none;
+  }
+  .header-phone-badge:hover {
+    background: rgba(255, 255, 255, 0.28);
+    transform: translateY(-1px);
+  }
+  @media (max-width: 680px) {
+    .brand { flex-wrap: wrap; }
+    .header-phone-badge { margin-left: 0; margin-top: 10px; }
+  }
+  /* Floating WA button */
+  .floating-wa {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #25d366;
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 50px;
+    font-size: .86rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 16px rgba(0,0,0,.25);
+    z-index: 99;
+    transition: transform .2s, box-shadow .2s;
+    text-decoration: none;
+  }
+  .floating-wa:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0,0,0,.35);
+  }
+
+  footer {
+    background: var(--footer-bg);
+    color: var(--muted);
+    text-align: center;
+    padding: 24px 16px;
+    font-size: .88rem;
+    border-top: 1px solid var(--border);
+    transition: background-color .25s ease, border-color .25s ease;
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header" id="beranda">
+  <div class="brand">
+    <div class="logo" aria-hidden="true">🌿</div>
+    <div style="flex:1;">
+      <h1>Selamat Datang di Wisata Panyaweuyan</h1>
+      <p>Terasering sayur berundak dengan panorama Gunung Ciremai – Argapura, Majalengka</p>
+    </div>
+    <a href="https://wa.me/6282317713377" target="_blank" rel="noopener" class="header-phone-badge" title="Hubungi Pengelola via WhatsApp / Telepon">
+      <span style="font-size:1.15rem;">📞</span>
+      <span>
+        <small style="display:block; font-size:.68rem; opacity:.9; text-transform:uppercase; letter-spacing:.05em;">Info & Pemesanan</small>
+        <strong style="font-size:.92rem; letter-spacing:.02em;">082317713377</strong>
+      </span>
+    </a>
+  </div>
+  <!-- Foto-foto kegiatan wisata (Banner) -->
+  <div class="banner" id="banner"></div>
+</header>
+
+<!-- Menu aplikasi -->
+<nav aria-label="Menu utama">
+  <div class="nav-container">
+    <ul>
+      <li><a href="#beranda" class="active">Beranda</a></li>
+      <li><a href="#paket">Paket Wisata</a></li>
+      <li><a href="#tiket">Tiket & Info</a></li>
+      <li><a href="#video">Video</a></li>
+      <li><a href="#galeri">Galeri</a></li>
+      <li><a href="#kontak">Kontak</a></li>
+    </ul>
+    <button id="theme-toggle" class="theme-toggle-btn" type="button" aria-label="Ubah tema mode gelap atau terang" title="Ganti Mode Tema">
+      <span class="theme-icon" aria-hidden="true">🌙</span>
+      <span class="theme-text">Mode Gelap</span>
+    </button>
+  </div>
+</nav>
+
+<main>
+  <!-- Statistik ringkas -->
+  <div class="stats">
+    <div class="stat"><div class="icon">🎒</div><div><strong id="stat-paket">6</strong><span>Pilihan Paket Wisata</span></div></div>
+    <div class="stat"><div class="icon">🎟️</div><div><strong>Rp 5.000 – 12.000</strong><span>Tiket Masuk / Orang</span></div></div>
+    <div class="stat"><div class="icon">⏰</div><div><strong>07.00 – 17.00</strong><span>Jam Buka (Sunrise 05.00)</span></div></div>
+    <div class="stat"><div class="icon">📸</div><div><strong id="stat-foto">4</strong><span>Foto Kegiatan Wisata</span></div></div>
+  </div>
+
+  <div class="layout">
+    <div>
+      <!-- Daftar paket wisata -->
+      <section id="paket">
+        <h2>Daftar Paket Wisata Majalengka</h2>
+        <div class="filters" role="group" aria-label="Filter kategori">
+          <button aria-pressed="true" data-cat="all">Semua</button>
+          <button aria-pressed="false" data-cat="City Tour">City Tour 1 Hari</button>
+          <button aria-pressed="false" data-cat="Kombinasi">Kombinasi Wisata</button>
+          <button aria-pressed="false" data-cat="Reguler & Alam">Reguler & Sunrise</button>
+        </div>
+        <div class="packages" id="packages"></div>
+      </section>
+    </div>
+
+    <aside>
+      <!-- Tiket & Jam Operasional -->
+      <section id="tiket" style="margin-top:36px">
+        <h2>Informasi & Tiket</h2>
+        <div class="box info">
+          <h3>🎟️ Harga Tiket Masuk & Parkir</h3>
+          <ul>
+            <li>🎫 <strong>Tiket Masuk:</strong> Rp 5.000 – Rp 12.000 / orang</li>
+            <li>🛵 <strong>Parkir Motor:</strong> Rp 2.000</li>
+            <li>🚗 <strong>Parkir Mobil:</strong> Rp 5.000</li>
+            <li>⏰ <strong>Jam Buka Reguler:</strong> 07.00 – 17.00 WIB</li>
+            <li>🌅 <strong>Khusus Sunrise:</strong> Buka mulai 05.00 WIB</li>
+            <li>📍 <strong>Lokasi:</strong> Sukasari Kaler, Argapura, Majalengka</li>
+            <li>🌄 <strong>Ketinggian:</strong> ± 1.000 mdpl (hawa sejuk)</li>
+            <li>📞 <strong>Kontak Resmi:</strong> <a href="https://wa.me/6282317713377" target="_blank" rel="noopener" style="color:var(--green); font-weight:700;">082317713377</a> (WA / Telp)</li>
+          </ul>
+        </div>
+
+        <div class="box info highlight-box">
+          <h3>🗺️ Layanan Terpadu City Tour</h3>
+          <p style="font-size: .84rem; color: var(--muted); margin-bottom: 8px;">
+            Paket wisata terpadu 1 hari di Majalengka dapat disesuaikan dan dikombinasikan dengan destinasi favorit di sekitar Argapura:
+          </p>
+          <ul>
+            <li>🌾 <strong>Ciboer Pass:</strong> Terasering sawah asri & kafe santai</li>
+            <li>💧 <strong>Curug Cipeuteuy:</strong> Kesegaran air terjun alami</li>
+            <li>🚐 <strong>Fasilitas:</strong> Transportasi lokal & pemandu</li>
+            <li>👥 <strong>Tarif:</strong> Mulai Rp 200.000 / pax (fleksibel)</li>
+            <li>📞 <strong>Reservasi:</strong> <a href="https://wa.me/6282317713377" target="_blank" rel="noopener" style="color:var(--orange-dark); font-weight:700;">082317713377 (WhatsApp)</a></li>
+          </ul>
+        </div>
+
+        <!-- Video Aktivitas -->
+        <div class="box" id="video">
+          <h3>▶ Video Aktivitas</h3>
+          <div class="video">
+            <iframe 
+              src="https://www.youtube.com/embed/KT-Gy-QIPb4?rel=0&modestbranding=1" 
+              title="Pesona Keindahan Terasering Panyaweuyan Majalengka" 
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+              referrerpolicy="strict-origin-when-cross-origin"
+              allowfullscreen 
+              loading="lazy">
+            </iframe>
+          </div>
+          <div style="margin-top:10px; display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-size:.82rem; color:var(--muted);">🎬 Putar langsung di website</span>
+            <span class="badge-pill">Wisata Panyaweuyan</span>
+          </div>
+
+          <!-- Peringatan otomatis jika dibuka via file:// (Error 153 YouTube) -->
+          <div id="file-protocol-notice" style="display:none; margin-top:12px; background:var(--highlight-bg); border:1px solid var(--highlight-border); padding:10px 14px; border-radius:8px; font-size:.82rem; line-height:1.5;">
+            ⚠️ <strong>Catatan Pemutaran Lokal:</strong><br>
+            Karena website dibuka langsung dari berkas lokal (<code>file://</code>), YouTube menerapkan keamanan (*Error 153*) dan mengalihkan ke web YouTube.<br>
+            👉 <strong>Solusi:</strong> Jalankan berkas <strong><code>Jalankan-Website.bat</code></strong> di folder ini (atau gunakan server lokal / GitHub Pages) agar video dapat diputar langsung di dalam website!
+          </div>
+        </div>
+      </section>
+    </aside>
+  </div>
+
+  <!-- Galeri -->
+  <section id="galeri">
+    <h2>Galeri Kegiatan</h2>
+    <div class="gallery" id="gallery"></div>
+  </section>
+
+  <!-- Kontak & Reservasi -->
+  <section id="kontak">
+    <h2>Kontak & Reservasi</h2>
+    <div class="contact-card">
+      <div class="contact-main">
+        <h3>Pusat Informasi & Pemesanan Wisata</h3>
+        <p>
+          Ingin memesan paket tour, sewa pemandu lokal, tiket rombongan, atau menanyakan info kondisi cuaca dan jadwal sunrise di Panyaweuyan? Silakan hubungi kontak pengelola kami:
+        </p>
+        <div class="phone-highlight">
+          <span class="phone-icon" aria-hidden="true">📞</span>
+          <div>
+            <div class="phone-label">Nomor Telepon / WhatsApp Resmi</div>
+            <a href="tel:082317713377" class="phone-number" title="Hubungi 082317713377">082317713377</a>
+          </div>
+        </div>
+        <div class="contact-actions">
+          <a href="https://wa.me/6282317713377?text=Halo%20Pengelola%20Wisata%20Panyaweuyan,%20saya%20ingin%20informasi%20dan%20reservasi%20paket%20wisata" target="_blank" rel="noopener" class="btn-wa">
+            💬 Chat via WhatsApp (082317713377)
+          </a>
+          <a href="tel:082317713377" class="btn-call">
+            📞 Hubungi Telepon Langsung
+          </a>
+        </div>
+      </div>
+
+      <div class="contact-details">
+        <div class="detail-item">
+          <strong>📍 Alamat Lokasi:</strong>
+          <span>Sukasari Kaler, Kec. Argapura, Kabupaten Majalengka, Jawa Barat</span>
+        </div>
+        <div class="detail-item">
+          <strong>⏰ Jam Layanan Pemesanan:</strong>
+          <span>Setiap Hari (06.00 – 21.00 WIB)</span>
+        </div>
+        <div class="detail-item">
+          <strong>🎒 Layanan Tersedia:</strong>
+          <span>Pemesanan Paket Wisata, Sunrise Tour, Tur Edukasi Tani, serta Rekomendasi Penginapan & Kuliner Lokal.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- Lightbox Modal -->
+<dialog id="lightbox">
+  <div class="dialog-content">
+    <img id="lightbox-img" src="" alt="Preview Foto">
+    <div class="dialog-info">
+      <span id="lightbox-cap">Foto Wisata</span>
+      <button class="dialog-close" type="button" aria-label="Tutup modal">Tutup ✕</button>
+    </div>
+  </div>
+</dialog>
+
+<footer>
+  <p>© 2026 Wisata Panyaweuyan, Majalengka · Tugas Pertemuan 3 – User Interface Promosi Wisata</p>
+  <p style="margin-top:6px; font-size:.84rem; opacity:.85;">
+    Layanan Informasi & Pemesanan: <a href="tel:082317713377" style="color:var(--orange); font-weight:700;">082317713377</a> (WA / Telp)
+  </p>
+</footer>
+
+<script>
+  // Koleksi foto asli kegiatan wisata yang diunggah
+  const photos = [
+    {
+      src: "images/terasering-panorama.jpg",
+      tag: "Lanskap Hijau",
+      title: "Panorama Terasering Panyaweuyan",
+      desc: "Hamparan kebun bawang sayur berundak dengan lekukan terasering yang asri di lereng Gunung Ciremai."
+    },
+    {
+      src: "images/tangga-puncak.jpg",
+      tag: "Spot Tangga Puncak",
+      title: "Jalur Tangga Menuju Gardu Pandang",
+      desc: "Anak tangga ikonik menanjak di tengah perbukitan terasering menuju puncak Lawang Saketeng."
+    },
+    {
+      src: "images/aerial-terasering.jpg",
+      tag: "Foto Udara (Drone)",
+      title: "Pemandangan Udara Lembah & Jalur Berkelok",
+      desc: "Lanskap spektakuler jalan aspal membelah petak terasering bawang daun yang tersusun rapi simetris."
+    },
+    {
+      src: "images/wisatawan-spot-foto.jpg",
+      tag: "Spot Santai",
+      title: "Area Istirahat & Spot Foto Wisatawan",
+      desc: "Fasilitas tempat duduk santai pengunjung untuk menikmati sejuknya udara pegunungan dan panorama bukit."
+    }
+  ];
+
+  // Daftar paket wisata Majalengka terpadu & tiket masuk
+  const packages = [
+    {
+      title: "Paket Wisata Terasering Panyaweuyan (City Tour 1 Hari)",
+      cat: "City Tour",
+      date: "Tersedia Setiap Hari",
+      desc: "Layanan terpadu city tour 1 hari menjelajahi spot-spot terbaik Panyaweuyan. Sudah termasuk transportasi lokal, pemandu wisata, serta tiket masuk.",
+      price: "Mulai Rp 200.000 / pax",
+      img: "images/aerial-terasering.jpg"
+    },
+    {
+      title: "Paket Kombinasi Panyaweuyan + Ciboer Pass",
+      cat: "Kombinasi",
+      date: "Tersedia Setiap Hari",
+      desc: "Eksplorasi gabungan dua lanskap ikonik Argapura: terasering bawang Panyaweuyan dan hamparan sawah hijau serta kafe santai Ciboer Pass.",
+      price: "Rp 250.000 / pax",
+      img: "images/terasering-panorama.jpg"
+    },
+    {
+      title: "Paket Kombinasi Panyaweuyan + Curug Cipeuteuy",
+      cat: "Kombinasi",
+      date: "Tersedia Setiap Hari",
+      desc: "Perpaduan keindahan panorama terasering lereng Ciremai dan kesegaran kolam alami air terjun Curug Cipeuteuy yang asri dan sejuk.",
+      price: "Rp 275.000 / pax",
+      img: "images/tangga-puncak.jpg"
+    },
+    {
+      title: "Paket Sunrise Hunter Panyaweuyan (Early Access 05.00 WIB)",
+      cat: "Reguler & Alam",
+      date: "Buka Khusus 05.00 WIB",
+      desc: "Akses awal khusus pemburu matahari terbit di titik tertinggi terasering berlatar Gunung Ciremai dan kabut pagi, dilengkapi teh/kopi hangat.",
+      price: "Rp 150.000 / pax",
+      img: "images/wisatawan-spot-foto.jpg"
+    },
+    {
+      title: "Paket Edukasi Tani Sayur & Terasering Argapura",
+      cat: "City Tour",
+      date: "Jadwal Fleksibel",
+      desc: "Tur edukasi terpadu belajar langsung metode menanam bawang daun di lereng berundak bersama petani lokal dengan bimbingan pemandu.",
+      price: "Rp 180.000 / pax",
+      img: "images/terasering-panorama.jpg"
+    },
+    {
+      title: "Tiket Masuk Reguler Mandiri",
+      cat: "Reguler & Alam",
+      date: "Jam Buka 07.00 – 17.00 WIB",
+      desc: "Kunjungan mandiri menikmati jalur tangga terasering, spot foto Lawang Saketeng, dan pemandangan lembah secara leluasa.",
+      price: "Rp 5.000 – Rp 12.000",
+      img: "images/tangga-puncak.jpg"
+    }
+  ];
+
+  // 1. Render Banner
+  document.getElementById("banner").innerHTML = photos.map(p => `
+    <div class="banner-item" title="${p.title}" data-src="${p.src}">
+      <img src="${p.src}" alt="${p.title}" loading="lazy">
+      <span class="banner-tag">${p.tag}</span>
+    </div>
+  `).join("");
+
+  // 2. Render Galeri Kegiatan
+  document.getElementById("gallery").innerHTML = photos.map(p => `
+    <article class="gallery-card" data-src="${p.src}" data-title="${p.title}">
+      <div class="img-wrap">
+        <img src="${p.src}" alt="${p.title}" loading="lazy">
+        <span class="zoom-hint">🔍</span>
+      </div>
+      <div class="caption">
+        <span class="tag" style="margin-bottom:6px">${p.tag}</span>
+        <h4>${p.title}</h4>
+        <p>${p.desc}</p>
+      </div>
+    </article>
+  `).join("");
+
+  // Statistik
+  document.getElementById("stat-foto").textContent = photos.length;
+  document.getElementById("stat-paket").textContent = packages.length;
+
+  // 3. Render Paket Wisata
+  const box = document.getElementById("packages");
+  function render(cat = "all") {
+    box.innerHTML = packages.filter(p => cat === "all" || p.cat === cat).map(p => `
+      <article class="card">
+        <div class="card-img-wrap" data-src="${p.img}" data-title="${p.title}">
+          <img src="${p.img}" alt="${p.title}" loading="lazy">
+        </div>
+        <div class="body">
+          <span class="tag">${p.cat}</span>
+          <span class="date">📅 ${p.date}</span>
+          <h3>${p.title}</h3>
+          <p>${p.desc}</p>
+          <div class="foot">
+            <span class="price">${p.price}</span>
+            <a class="btn" href="https://wa.me/6282317713377?text=${encodeURIComponent('Halo Pengelola Wisata Panyaweuyan, saya ingin reservasi: ' + p.title)}" target="_blank" rel="noopener">Pesan (WA)</a>
+          </div>
+        </div>
+      </article>`).join("");
+  }
+  render();
+
+  // Filter paket
+  document.querySelector(".filters").addEventListener("click", e => {
+    const b = e.target.closest("button"); if (!b) return;
+    document.querySelectorAll(".filters button").forEach(x => x.setAttribute("aria-pressed", x === b));
+    render(b.dataset.cat);
+  });
+
+  // 4. Lightbox Modal interaktif
+  const lb = document.getElementById("lightbox");
+  const lbImg = document.getElementById("lightbox-img");
+  const lbCap = document.getElementById("lightbox-cap");
+
+  function openLightbox(src, caption) {
+    lbImg.src = src;
+    lbImg.alt = caption || "Foto Wisata";
+    lbCap.textContent = caption || "Foto Wisata Panyaweuyan";
+    lb.showModal();
+  }
+
+  document.addEventListener("click", e => {
+    const bannerItem = e.target.closest(".banner-item");
+    if (bannerItem) {
+      const img = bannerItem.querySelector("img");
+      openLightbox(bannerItem.dataset.src || img.src, bannerItem.title);
+      return;
+    }
+
+    const galCard = e.target.closest(".gallery-card");
+    if (galCard) {
+      openLightbox(galCard.dataset.src, galCard.dataset.title);
+      return;
+    }
+
+    const cardImgWrap = e.target.closest(".card-img-wrap");
+    if (cardImgWrap) {
+      openLightbox(cardImgWrap.dataset.src, cardImgWrap.dataset.title);
+      return;
+    }
+
+    if (e.target.closest(".dialog-close") || e.target === lb) {
+      lb.close();
+    }
+  });
+
+  // Navigasi aktif saat scroll
+  const links = document.querySelectorAll("nav a");
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(en => {
+      if (en.isIntersecting) links.forEach(l => l.classList.toggle("active", l.getAttribute("href") === "#" + en.target.id));
+    });
+  }, { rootMargin: "-40% 0px -55% 0px" });
+  document.querySelectorAll("#beranda, #paket, #tiket, #video, #galeri, #kontak").forEach(s => io.observe(s));
+
+  // 5. Dark Mode Handler dengan localStorage & System Preference
+  const themeToggle = document.getElementById("theme-toggle");
+  const themeIcon = themeToggle.querySelector(".theme-icon");
+  const themeText = themeToggle.querySelector(".theme-text");
+
+  function setTheme(theme) {
+    if (theme === "dark") {
+      document.documentElement.setAttribute("data-theme", "dark");
+      themeIcon.textContent = "☀️";
+      themeText.textContent = "Mode Terang";
+      themeToggle.setAttribute("aria-label", "Beralih ke mode terang");
+      themeToggle.title = "Beralih ke mode terang";
+    } else {
+      document.documentElement.removeAttribute("data-theme");
+      themeIcon.textContent = "🌙";
+      themeText.textContent = "Mode Gelap";
+      themeToggle.setAttribute("aria-label", "Beralih ke mode gelap");
+      themeToggle.title = "Beralih ke mode gelap";
+    }
+  }
+
+  const savedTheme = localStorage.getItem("theme");
+  const systemPrefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  const currentTheme = savedTheme || (systemPrefersDark ? "dark" : "light");
+  setTheme(currentTheme);
+
+  themeToggle.addEventListener("click", () => {
+    const isDark = document.documentElement.getAttribute("data-theme") === "dark";
+    const nextTheme = isDark ? "light" : "dark";
+    setTheme(nextTheme);
+    localStorage.setItem("theme", nextTheme);
+  });
+
+  if (window.matchMedia) {
+    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", e => {
+      if (!localStorage.getItem("theme")) {
+        setTheme(e.matches ? "dark" : "light");
+      }
+    });
+  }
+
+  // 6. Deteksi protokol file:// jika dibuka secara offline langsung dari folder
+  if (window.location.protocol === "file:") {
+    const fileNotice = document.getElementById("file-protocol-notice");
+    if (fileNotice) fileNotice.style.display = "block";
+  }
+</script>
+
+<!-- Tombol Terapung WhatsApp -->
+<a href="https://wa.me/6282317713377?text=Halo%20Pengelola%20Wisata%20Panyaweuyan,%20saya%20ingin%20informasi%20wisata" target="_blank" rel="noopener" class="floating-wa" title="Hubungi Pengelola via WhatsApp">
+  <span>💬</span> <span>WA: 082317713377</span>
+</a>
+
+</body>
+</html>
