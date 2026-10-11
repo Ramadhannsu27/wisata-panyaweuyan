@@ -1,7 +1,7 @@
 @echo off
-title Push Wisata Panyaweuyan ke GitHub
+title Push Wisata Panyaweuyan ke GitHub (univmajalengka/2514101062)
 echo ========================================================
-echo   MENGUNGGAH PROYEK KE GITHUB (Ramadhannsu27)
+echo   MENGUNGGAH PROYEK KE GITHUB (univmajalengka/2514101062)
 echo ========================================================
 echo.
 echo Menjalankan: git push -u origin main ...
@@ -15,10 +15,10 @@ if %errorlevel% equ 0 (
     echo ========================================================
     echo   BERHASIL DIUNGGAH KE GITHUB!
     echo ========================================================
-    echo Repositori: https://github.com/Ramadhannsu27/wisata-panyaweuyan
+    echo Repositori: https://github.com/univmajalengka/2514101062
     echo.
     echo Langkah selanjutnya untuk mengaktifkan website online:
-    echo 1. Buka https://github.com/Ramadhannsu27/wisata-panyaweuyan/settings/pages
+    echo 1. Buka https://github.com/univmajalengka/2514101062/settings/pages
     echo 2. Pada bagian 'Branch', pilih 'main' dan klik 'Save'.
     echo 3. Video YouTube akan otomatis berjalan di website GitHub Pages Anda!
 ) else (
